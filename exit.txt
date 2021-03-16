@@ -1,0 +1,24 @@
+String lida do arquivo: wabbawabba
+Tamanho da string digitada: 10
+
+Tabela de Simbolos Inicial
+0   a
+1   b
+2   w
+
+Tabela de Simbolos Final
+0   a
+1   b
+2   w
+3   wa
+4   ab
+5   bb
+6   ba
+7   aw
+8   wab
+9   bba
+
+Codificacao
+2   0   1   1   0   3   5   0   
+
+Decodificacao: wabbawabba
