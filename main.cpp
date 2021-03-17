@@ -21,38 +21,13 @@ Ex:  97 a
 
 void createInitialTable(string sTotal, vector<string> &dictionary)
 {
-  //Primeiro peguei cada caractere da string, transformei em string e dei push no vector dictionary
+  //Peguei cada caractere da string, transformei eles em string e dei push no vector dictionary
   for(int i=0; i < sTotal.size(); i++)
   {
     char c = sTotal[i];
     string sTotal(1,c);
     dictionary.push_back(sTotal);
   }
-}
-
-void removeDuplicateElements(vector<string> &dictionary)
-{
-  /*
-  Removi os elementos repetidos utilizando um grupo de for's que servirão para remover os elementos duplicados do vector
-  referência https://stackoverflow.com/questions/40453469/removing-a-string-from-a-stdvector#:~:text=To%20remove%20a%20single%20copy,begin()%2C%20v.
-  */
-  for(int j=0; j < dictionary.size();j++)
-  {
-      for(int k=0; k < dictionary.size(); k++)
-      {
-        for(int l = j+1; l < dictionary.size(); l++)
-        {
-            if(dictionary[j] == dictionary[l])
-            {
-                auto itr = find(dictionary.begin(), dictionary.end(), dictionary[l]);
-                if (itr != dictionary.end())
-                {
-                dictionary.erase(itr); 
-                } 
-            }
-        }
-      }
-  } 
 }
 
 void compression(string sTotal, vector<int> &codified, vector<string> &dictionary){
@@ -106,7 +81,7 @@ void printCodified(vector<int> &codified, ofstream &arq)
 
 void printDecodify(string finalString, ofstream &arq)
 {
-  arq << "\n\nDecodificacao: " << finalString;
+  arq << "\n\nDecodificacao\n" << finalString;
 }
 
 void printInitialTable(vector<string> &dictionary, ofstream &arq)
@@ -130,6 +105,7 @@ void printFinalTable(vector<string> &dictionary, ofstream &arq)
 
 int main()
 {
+  cout << "Aguarde o processamento do arquivo..." << endl;
   string s;
   string sTotal;
   ifstream in;
@@ -138,27 +114,27 @@ int main()
   in.open("entry.txt");
   while(!in.eof()) {
 	  getline(in, s);
-	  sTotal += s;
+    sTotal += s;
   }
   in.close();
 
   vector<int> codified;
   vector<string> dictionary;
 
-  cout << "Aguarde o processamento do arquivo..." << endl;
-  arq << "String lida do arquivo: " << sTotal << endl;
-  arq << "Tamanho da string digitada: " << sTotal.size() << endl;
+  arq << "String lida do arquivo \n" << sTotal << endl;
+  arq << "\nTamanho da string digitada\n" << sTotal.size() << endl;
 
   //Criando o dicionário inicial
   createInitialTable(sTotal, dictionary);
   /*
-  Utilizei o sort para ordenar esses caracteres/strings.
-  O sort já ordena corretamente na ordem dos elementos da tabela ASCII.
+  Utilizei o sort para ordenar esses caracteres/strings. O sort já ordena corretamente na ordem dos elementos da tabela ASCII.
   Caso fosse necessário implementar uma função própria sem o sort, o que mudaria é que eu teria que fazer um map ou table,
   contendo as 256 posições da tabela ASCII, contendo indice e valor.
+  O erase irá remover os elementos duplicados.
   */
   sort(dictionary.begin(),dictionary.end());
-  removeDuplicateElements(dictionary);
+  dictionary.erase( unique( dictionary.begin(), dictionary.end() ), dictionary.end() );
+  
   printInitialTable(dictionary, arq);
 
  
