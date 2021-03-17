@@ -72,40 +72,40 @@ string decompression(vector<string> &dictionary, vector<int> &codified)
 
 void printCodified(vector<int> &codified, ofstream &arq)
 {
-  cout << "\nCodificacao" << endl;
+  arq << "\nCodificacao" << endl;
   for (int n = 0; n < codified.size(); n++)
   {
-    cout << codified[n] << "   ";
+    arq << codified[n] << "   ";
   }
 }
 
 void printDecodify(string finalString, ofstream &arq)
 {
-  cout << "\n\nDecodificacao\n"
-       << finalString << endl;
+  arq << "\n\nDecodificacao\n"
+      << finalString << endl;
 }
 
 void printInitialTable(vector<string> &dictionary, ofstream &arq)
 {
   //Imprimindo a tabela de simbolos inicial
-  cout << "\nTabela de Simbolos Inicial" << endl;
+  arq << "\nTabela de Simbolos Inicial" << endl;
   for (int p = 0; p < dictionary.size(); p++)
   {
-    cout << p << "   " << dictionary[p] << endl;
+    arq << p << "   " << dictionary[p] << endl;
   }
 }
 void printFinalTable(vector<string> &dictionary, ofstream &arq)
 {
-  cout << "\nTabela de Simbolos Final" << endl;
+  arq << "\nTabela de Simbolos Final" << endl;
   for (int p = 0; p < dictionary.size(); p++)
   {
-    cout << p << "   " << dictionary[p] << endl;
+    arq << p << "   " << dictionary[p] << endl;
   }
 }
 
 int main()
 {
-  //cout << "Aguarde o processamento do arquivo..." << endl;
+  cout << "Aguarde o processamento do arquivo..." << endl;
   string s;
   string sTotal;
   ifstream in;
@@ -150,5 +150,5 @@ int main()
   printDecodify(decodified, arq);
 
   arq.close();
-  //cout << "Arquivo processado, veja o resultado em exit.txt!";
+  cout << "Arquivo processado, veja o resultado em exit.txt!";
 }
