@@ -27,6 +27,14 @@ void createInitialTable(string sTotal, vector<string> &dictionary)
     string sTotal(1, c);
     dictionary.push_back(sTotal);
   }
+  /*
+  Utilizei o sort para ordenar esses caracteres/strings. O sort já ordena corretamente na ordem dos elementos da tabela ASCII.
+  Caso fosse necessário implementar uma função própria sem o sort, o que mudaria é que eu teria que fazer um map ou table,
+  contendo as 256 posições da tabela ASCII, contendo indice e valor.
+  O erase irá remover os elementos duplicados com o método unique.
+  */
+  sort(dictionary.begin(), dictionary.end());
+  dictionary.erase(unique(dictionary.begin(), dictionary.end()), dictionary.end());
 }
 
 void compression(string sTotal, vector<int> &codified, vector<string> &dictionary)
@@ -127,27 +135,18 @@ int main()
   arq << "\nTamanho da string digitada\n"
       << sTotal.size() << endl;
 
-  //Criando o dicionário inicial
+  //Criando o dicionário inicial utilizando a ordem da tabela ASCII
   createInitialTable(sTotal, dictionary);
-  /*
-  Utilizei o sort para ordenar esses caracteres/strings. O sort já ordena corretamente na ordem dos elementos da tabela ASCII.
-  Caso fosse necessário implementar uma função própria sem o sort, o que mudaria é que eu teria que fazer um map ou table,
-  contendo as 256 posições da tabela ASCII, contendo indice e valor.
-  O erase irá remover os elementos duplicados.
-  */
-  sort(dictionary.begin(), dictionary.end());
-  dictionary.erase(unique(dictionary.begin(), dictionary.end()), dictionary.end());
-
-  printInitialTable(dictionary, arq);
+  printInitialTable(dictionary, arq); //printando a tabela inicial
 
   //Codificação
   compression(sTotal, codified, dictionary);
-  printFinalTable(dictionary, arq);
-  printCodified(codified, arq);
+  printFinalTable(dictionary, arq); //printando a tabela final
+  printCodified(codified, arq); //printando a codificação
 
   //Decodificação
   string decodified = decompression(dictionary, codified);
-  printDecodify(decodified, arq);
+  printDecodify(decodified, arq); //printando a decodificação
 
   arq.close();
   cout << "Arquivo processado, veja o resultado em exit.txt!";
