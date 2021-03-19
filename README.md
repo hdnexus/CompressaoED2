@@ -14,11 +14,11 @@
 
 3. Compile o código, com o comando:
 ```
-./g++ -o main *.cpp
+g++ -o main *.cpp
 ```
 3. Depois execute o programa, com o comando:
 ```
-./main entry.txt (ou o nome do seu arquivo.txt)
+main entry.txt (ou o nome do seu arquivo.txt)
 ```
 4. A saída será salva no arquivo "exit.txt"
 
