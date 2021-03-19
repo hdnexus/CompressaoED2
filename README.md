@@ -1,4 +1,4 @@
-<h1>:bookmark_tabs: Atividade Estrutura de Dados 2 - Compressão</h1>
+<h1>:bookmark_tabs: Atividade Estrutura de Dados 2 - Compressão LZW</h1>
 
 > Atividade para a disciplina de estrutura de dados 2 - UFJF
 

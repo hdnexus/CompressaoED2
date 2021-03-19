@@ -1,69 +1,28 @@
+------Metodo de posicoes da tabela ASCII------
+
 String lida do arquivo 
-Um brinde ao rei Lovenak!
+banana_banana
 
 Tamanho da string digitada
-25
+13
 
 Tabela de Simbolos Inicial
-0    
-1   !
-2   L
-3   U
-4   a
-5   b
-6   d
-7   e
-8   i
-9   k
-10   m
-11   n
-12   o
-13   r
-14   v
+95   _
+97   a
+98   b
+110   n
 
 Tabela de Simbolos Final
-0    
-1   !
-2   L
-3   U
-4   a
-5   b
-6   d
-7   e
-8   i
-9   k
-10   m
-11   n
-12   o
-13   r
-14   v
-15   Um
-16   m 
-17    b
-18   br
-19   ri
-20   in
-21   nd
-22   de
-23   e 
-24    a
-25   ao
-26   o 
-27    r
-28   re
-29   ei
-30   i 
-31    L
-32   Lo
-33   ov
-34   ve
-35   en
-36   na
-37   ak
-38   k!
+95   _
+97   a
+98   b
+110   n
+256   ba
+257   an
+258   na
 
 Codificacao
-3   10   0   5   13   8   11   6   7   0   4   12   0   13   7   8   0   2   12   14   7   11   4   9   1   
+98   97   110   257   97   95   256   258   258   
 
 Decodificacao
-Um brinde ao rei Lovenak!
+banana_banana

@@ -3,22 +3,15 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <unordered_map>
 
 using namespace std;
 
-/* Comentários
-1- Professor, antes de tudo, gostaria de falar que utilizei o 0 como primeiro output Index da tabela, vi alguns exemplos que começavam com 1, 
-outros com 0, só que não achei nada falando qual era o modelo correto.
-2- Mandei um email para o senhor, e você disse que eu poderia ter utilizado o output Index como inteiros (Ex: 0,1,2,3) e não posições seguindo a 
-tabela ASCII (Ex: 86, 256, 257). Caso fosse necessário utilizar os valores da tabela ASCII como output Index, não haveriam mudanças tão drásticas.
-Eu poderia após preencher um map/table com os elementos da tabela ASCII, pegar a posição dos meus caracteres para fazer o dicionario inicial, e depois
-eu criaria uma variável que armazenaria o valor 256, e ia incrementando esse valor a medida que aumentasse os indices do diciónario. 
-Ex:  97 a
-     99 c
-     256 ac
-*/
+////////////
+//OPÇÃO 1//
+//////////
 
-void createInitialTable(string sTotal, vector<string> &dictionary)
+void createInitialTableInteger(string sTotal, vector<string> &dictionary)
 {
   //Peguei cada caractere da string, transformei eles em string e dei push no vector dictionary
   for (int i = 0; i < sTotal.size(); i++)
@@ -29,15 +22,14 @@ void createInitialTable(string sTotal, vector<string> &dictionary)
   }
   /*
   Utilizei o sort para ordenar esses caracteres/strings. O sort já ordena corretamente na ordem dos elementos da tabela ASCII.
-  Caso fosse necessário implementar uma função própria sem o sort, o que mudaria é que eu teria que fazer um map ou table,
-  contendo as 256 posições da tabela ASCII, contendo indice e valor.
-  O erase irá remover os elementos duplicados com o método unique.
+  Removo os elementos duplicados para ter só valores (que estão dentro da tabela ASCII) sem repetições no dicionário inicial.
+  O erase irá remover os elementos duplicados junto com o unique.
   */
   sort(dictionary.begin(), dictionary.end());
   dictionary.erase(unique(dictionary.begin(), dictionary.end()), dictionary.end());
 }
 
-void compression(string sTotal, vector<int> &codified, vector<string> &dictionary)
+void compressionInteger(string sTotal, vector<int> &codified, vector<string> &dictionary)
 {
   int index;
   char cx = sTotal[0];
@@ -65,7 +57,7 @@ void compression(string sTotal, vector<int> &codified, vector<string> &dictionar
   codified.push_back(index);
 }
 
-string decompression(vector<string> &dictionary, vector<int> &codified)
+string decompressionInteger(vector<string> &dictionary, vector<int> &codified)
 {
   string auxString;
   string finalString;
@@ -78,7 +70,7 @@ string decompression(vector<string> &dictionary, vector<int> &codified)
   return finalString;
 }
 
-void printCodified(vector<int> &codified, ofstream &arq)
+void printCodifiedInteger(vector<int> &codified, ofstream &arq)
 {
   arq << "\nCodificacao" << endl;
   for (int n = 0; n < codified.size(); n++)
@@ -87,13 +79,13 @@ void printCodified(vector<int> &codified, ofstream &arq)
   }
 }
 
-void printDecodify(string finalString, ofstream &arq)
+void printDecodifiedInteger(string finalString, ofstream &arq)
 {
   arq << "\n\nDecodificacao\n"
       << finalString << endl;
 }
 
-void printInitialTable(vector<string> &dictionary, ofstream &arq)
+void printInitialTableInteger(vector<string> &dictionary, ofstream &arq)
 {
   //Imprimindo a tabela de simbolos inicial
   arq << "\nTabela de Simbolos Inicial" << endl;
@@ -102,7 +94,7 @@ void printInitialTable(vector<string> &dictionary, ofstream &arq)
     arq << p << "   " << dictionary[p] << endl;
   }
 }
-void printFinalTable(vector<string> &dictionary, ofstream &arq)
+void printFinalTableInteger(vector<string> &dictionary, ofstream &arq)
 {
   arq << "\nTabela de Simbolos Final" << endl;
   for (int p = 0; p < dictionary.size(); p++)
@@ -111,42 +103,230 @@ void printFinalTable(vector<string> &dictionary, ofstream &arq)
   }
 }
 
-int main()
+////////////
+//OPÇÃO 2//
+//////////
+
+void createASCIITable(unordered_map<string, int> &dictionary)
 {
-  cout << "Aguarde o processamento do arquivo..." << endl;
+  string c;
+  for (int i = 0; i < 256; i++)
+  {
+    c = "";
+    c += char(i);
+    dictionary[c] = i;
+  }
+}
+
+//Parecido com a compressão com inteiros
+//referência https://www.geeksforgeeks.org/lzw-lempel-ziv-welch-compression-technique/
+void compressionASCII(unordered_map<string, int> &dictionary, vector<int> &codified, string sTotal, vector<string> &finalTable)
+{
+  int index;
+  char cx = sTotal[0];
+  string P(1, cx);
+  string C;
+  int newCode = 256; //referência: Slide do jairo
+  for (int i = 0; i < sTotal.size() - 1; i++)
+  {
+    C = sTotal[i + 1];
+    if (dictionary.find(P + C) != dictionary.end())
+    {
+      P = P + C;
+    }
+    else
+    {
+      codified.push_back(dictionary[P]);
+      dictionary[P + C] = newCode;
+      finalTable.push_back(P + C);
+      newCode++;
+      P = C;
+    }
+  }
+  codified.push_back(dictionary[P]);
+}
+
+//referência https://www.geeksforgeeks.org/lzw-lempel-ziv-welch-compression-technique/
+void decompressionASCII(vector<int> &codified, ofstream &arq)
+{
+  unordered_map<int, string> dictionaryASCII;
+  string c;
+  for (int i = 0; i < 256; i++)
+  {
+    c = "";
+    c += char(i);
+    dictionaryASCII[i] = c;
+  }
+  int oldCode = codified[0];
+  int n;
+  arq << "\n\nDecodificacao" << endl;
+  string s = dictionaryASCII[oldCode];
+  c = "";
+  c += s[0];
+  arq << s;
+  int count = 256;
+  for (int i = 0; i < codified.size() - 1; i++)
+  {
+    n = codified[i + 1];
+    if (dictionaryASCII.find(n) == dictionaryASCII.end())
+    {
+      s = dictionaryASCII[oldCode];
+      s = s + c;
+    }
+    else
+    {
+      s = dictionaryASCII[n];
+    }
+    arq << s;
+    c = "";
+    c += s[0];
+    dictionaryASCII[count] = dictionaryASCII[oldCode] + c;
+    count++;
+    oldCode = n;
+  }
+}
+
+void printInitialTableASCII(vector<int> &codified, ofstream &arq)
+{
+  arq << "\nTabela de Simbolos Inicial" << endl;
+  vector<int> listIntegers;
+  for (int p = 0; p < codified.size(); p++)
+  {
+    if (codified[p] < 256)
+    {
+      listIntegers.push_back(codified[p]);
+    }
+  }
+
+  sort(listIntegers.begin(), listIntegers.end());
+  listIntegers.erase(unique(listIntegers.begin(), listIntegers.end()), listIntegers.end());
+
+  for (int i = 0; i < listIntegers.size(); i++)
+  {
+    arq << listIntegers[i] << "   " << char(listIntegers[i]) << endl;
+  }
+}
+
+void printCodifiedASCII(vector<int> &codified, ofstream &arq)
+{
+  arq << "\nCodificacao" << endl;
+  for (int n = 0; n < codified.size(); n++)
+  {
+    arq << codified[n] << "   ";
+  }
+}
+
+void printFinalTableASCII(vector<int> &codified, ofstream &arq, vector<string> &finalTable)
+{
+  arq << "\nTabela de Simbolos Final" << endl;
+  vector<int> listIntegers;
+  int value = 0;
+
+  for (int p = 0; p < codified.size(); p++)
+  {
+    listIntegers.push_back(codified[p]);
+  }
+
+  sort(listIntegers.begin(), listIntegers.end());
+  listIntegers.erase(unique(listIntegers.begin(), listIntegers.end()), listIntegers.end());
+
+  for (int i = 0; i < listIntegers.size(); i++)
+  {
+    if (listIntegers[i] < 256)
+    {
+      arq << listIntegers[i] << "   " << char(listIntegers[i]) << endl;
+    }
+    else
+    {
+      arq << listIntegers[i] << "   " << finalTable[value] << endl;
+      value++;
+    }
+  }
+}
+
+int main(int argc, char **argv)
+{
   string s;
   string sTotal;
-  ifstream in;
+  vector<int> codified;
+  vector<string> dictionary;
+  vector<string> finalTable;
+  vector<int> codifiedASCII;
+  unordered_map<string, int> dictionaryASCII;
+  int choice;
+
+  ifstream in(argv[1]);
+
   ofstream arq("exit.txt");
 
-  in.open("entry.txt");
-  while (!in.eof())
+  if (in.is_open())
   {
-    getline(in, s);
-    sTotal += s;
+    while (!in.eof())
+    {
+      getline(in, s);
+      sTotal += s;
+    }
   }
   in.close();
 
-  vector<int> codified;
-  vector<string> dictionary;
+  cout << "Atividade ED2 - Compressao LZW" << endl;
+  cout << "Digite a opcao desejada para comprimir seu arquivo txt" << endl;
+  cout << "[1] Para que os indices de codificadacao sejam uma ordem de valores inteiros" << endl;
+  cout << "[2] Para que os indices de codificadacao sejam as posicoes dos elementos na tabela ASCII" << endl;
+  cout << "Sua escolha: ";
+  cin >> choice;
 
-  arq << "String lida do arquivo \n"
-      << sTotal << endl;
-  arq << "\nTamanho da string digitada\n"
-      << sTotal.size() << endl;
+  while (choice < 1 || choice > 2)
+  {
+    cout << "Valor incorreto, digite uma opcao valida!" << endl;
+    cout << "Escolha novamente: ";
+    cin >> choice;
+  }
 
-  //Criando o dicionário inicial utilizando a ordem da tabela ASCII
-  createInitialTable(sTotal, dictionary);
-  printInitialTable(dictionary, arq); //printando a tabela inicial
+  cout << "Aguarde o processamento do arquivo..." << endl;
 
-  //Codificação
-  compression(sTotal, codified, dictionary);
-  printFinalTable(dictionary, arq); //printando a tabela final
-  printCodified(codified, arq); //printando a codificação
+  if (choice == 1)
+  {
+    arq << "------Metodo de numeros inteiros------" << endl;
+    arq << "\nString lida do arquivo \n"
+        << sTotal << endl;
+    arq << "\nTamanho da string digitada\n"
+        << sTotal.size() << endl;
 
-  //Decodificação
-  string decodified = decompression(dictionary, codified);
-  printDecodify(decodified, arq); //printando a decodificação
+    //Criando o dicionário inicial
+    createInitialTableInteger(sTotal, dictionary);
+    printInitialTableInteger(dictionary, arq); //printando a tabela inicial
+
+    //Codificação
+    compressionInteger(sTotal, codified, dictionary);
+    printFinalTableInteger(dictionary, arq); //printando a tabela final
+    printCodifiedInteger(codified, arq);     //printando a codificação
+
+    //Decodificação
+    string decodified = decompressionInteger(dictionary, codified);
+    printDecodifiedInteger(decodified, arq); //printando a decodificação
+  }
+
+  if (choice == 2)
+  {
+    arq << "------Metodo de posicoes da tabela ASCII------" << endl;
+    arq << "\nString lida do arquivo \n"
+        << sTotal << endl;
+    arq << "\nTamanho da string digitada\n"
+        << sTotal.size() << endl;
+
+    //Criando tabela ASCII, não utilizei dicionário inicial aqui.
+    createASCIITable(dictionaryASCII);
+
+    //Codificação
+    compressionASCII(dictionaryASCII, codifiedASCII, sTotal, finalTable);
+    printInitialTableASCII(codifiedASCII, arq);
+    printFinalTableASCII(codifiedASCII, arq, finalTable);
+    printCodifiedASCII(codifiedASCII, arq); //printando a codificação
+
+    //Decodificação
+    decompressionASCII(codifiedASCII, arq); //printando a decodificação
+  }
 
   arq.close();
   cout << "Arquivo processado, veja o resultado em exit.txt!";
