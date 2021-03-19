@@ -20,7 +20,7 @@
 ```
 ./main entry.txt (ou o nome do seu arquivo.txt)
 ```
-4. A saída será salva no arquivo txt "exit.txt"
+4. A saída será salva no arquivo "exit.txt"
 
 ## Demonstração - Exemplo antigo, sem argv
 
